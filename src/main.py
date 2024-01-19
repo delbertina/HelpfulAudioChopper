@@ -1,5 +1,3 @@
-# Import the AudioSegment class for processing audio and the 
-# split_on_silence function for separating out silent chunks.
 from pydub import AudioSegment
 from pydub.silence import split_on_silence
 from tkinter import Tk
@@ -23,7 +21,8 @@ Tk().withdraw() # we don't want a full GUI, so keep the root window from appeari
 filename = askopenfilename(
     title="Choose file to start chopping",
     filetypes=[('audio files', '.mp3;.wav')]) # show an "Open" dialog box and return the path to the selected file
-print(filename)
+short_filename = (filename.split('/')[-1])[:16]
+print(filename, short_filename)
 
 # Load your audio.
 song = ""
@@ -38,10 +37,7 @@ else:
 chunks = split_on_silence (
     # Use the loaded audio.
     song, 
-    # Specify that a silent chunk must be at least Xms long.
-    min_silence_len = 300,
-    # Consider a chunk silent if it's quieter than -16 dBFS.
-    # (You may want to adjust this parameter.)
+    min_silence_len = 200,
     silence_thresh = -60,
     keep_silence = 100
 )
@@ -49,20 +45,10 @@ chunks = split_on_silence (
 print(str(len(chunks)) + " chunks found in audio file " + filename)
 # Process each chunk with your parameters
 for i, chunk in enumerate(chunks):
-# for i, chunk in 10:
-    # Create a silence chunk that's 0.5 seconds (or 500 ms) long for padding.
-    # silence_chunk = AudioSegment.silent(duration=500)
-
-    # Add the padding chunk to beginning and end of the entire chunk.
-    audio_chunk = chunk
-
-    # Normalize the entire chunk.
-    # normalized_chunk = match_target_amplitude(audio_chunk, -20.0)
-
-    # Export the audio chunk with new bitrate.
+    # Export the audio chunk
     print("Exporting chunk{0}.wav.".format(i))
-    audio_chunk.export(
-        output_path + "/chunk{0}.wav".format(i),
+    chunk.export(
+        output_path + "/" + short_filename + "-" + "chunk{0}.wav".format(i),
         bitrate = "192k",
         format = "wav"
     )
