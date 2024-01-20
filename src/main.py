@@ -2,6 +2,7 @@ from pydub import AudioSegment
 from pydub.silence import split_on_silence
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename
+from tkinter.messagebox import askyesno
 from pathlib import Path
 from datetime import datetime
 
@@ -12,10 +13,12 @@ def match_target_amplitude(aChunk, target_dBFS):
     return aChunk.apply_gain(change_in_dBFS)
 
 # make directory for output files
-current_datetime = datetime.now() # get current datetime
-current_datetime_formatted = current_datetime.strftime("%Y-%m-%d_%H-%M-%S-%f") # format it to be a readable file folder name
-output_path = "./output/" + current_datetime_formatted # append the parent folder name to path
-Path(output_path).mkdir(parents=True, exist_ok=True) # make the path folders if they dont exist
+def prepare_output_dir() -> str:
+    current_datetime = datetime.now() # get current datetime
+    current_datetime_formatted = current_datetime.strftime("%Y-%m-%d_%H-%M-%S-%f") # format it to be a readable file folder name
+    output_path = "./output/" + current_datetime_formatted # append the parent folder name to path
+    Path(output_path).mkdir(parents=True, exist_ok=True) # make the path folders if they dont exist
+    return output_path
 
 Tk().withdraw() # we don't want a full GUI, so keep the root window from appearing
 filename = askopenfilename(
@@ -42,13 +45,22 @@ chunks = split_on_silence (
     keep_silence = 100
 )
 
-print(str(len(chunks)) + " chunks found in audio file " + filename)
+# Confirm with the user that the output number of chunks looks correct
+# Saving the files can take a long time so saves some time if this doesn't look right
+confirm_answer = askyesno(title=(str(len(chunks)) + " Chunks Found"),
+                          message=(str(len(chunks)) + " chunks were found.\nDo you want to continue?"))
+
+if (not confirm_answer):
+    exit("User decided to not continue.")
+    
+folder_path = prepare_output_dir()
+
 # Process each chunk with your parameters
 for i, chunk in enumerate(chunks):
     # Export the audio chunk
     print("Exporting chunk{0}.wav.".format(i))
     chunk.export(
-        output_path + "/" + short_filename + "-" + "chunk{0}.wav".format(i),
+        folder_path + "/" + short_filename + "-" + "chunk{0}.wav".format(i),
         bitrate = "192k",
         format = "wav"
     )
