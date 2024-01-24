@@ -1,10 +1,29 @@
+from typing import List
 from pydub import AudioSegment
 from pydub.silence import split_on_silence
-from tkinter import Tk, simpledialog
+from tkinter import Button, IntVar, Label, Radiobutton, Tk, simpledialog
 from tkinter.filedialog import askopenfilename
 from tkinter.messagebox import askyesno
 from pathlib import Path
 from datetime import datetime
+
+# Ask dialog with list of radio buttons
+# Returns ths index of the selected option
+# Default selected value is the first index
+# Returns the selected value if the dialog is closed
+def ask_radio_dialog(title: str, prompt: str, options: List[str]):
+    root = Tk()
+    root.title(title)
+    if prompt:
+        Label(root, text=prompt).pack()
+    v = IntVar(value=0)
+    for i, option in enumerate(options):
+        Radiobutton(root, text=option, variable=v, value=i).pack(anchor="w")
+    Button(root, text="OK", command=lambda:(root.destroy())).pack()
+    root.protocol(name="WM_DELETE_WINDOW", func=lambda:(root.destroy()))
+    root.mainloop()
+    root.quit() # Not totally sure why this is needed here and the destroy above, but it finally works
+    return v.get()
 
 # make directory for output files
 def prepare_output_dir() -> str:
@@ -14,7 +33,6 @@ def prepare_output_dir() -> str:
     Path(output_path).mkdir(parents=True, exist_ok=True) # make the path folders if they dont exist
     return output_path
 
-Tk().withdraw() # we don't want a full GUI, so keep the root window from appearing
 filename = askopenfilename(
     title="Choose file to start chopping",
     filetypes=[('audio files', '.mp3;.wav')]) # show an "Open" dialog box and return the path to the selected file
@@ -56,13 +74,25 @@ file_prefix = simpledialog.askstring(
 # if file prefix is not empty, add a dash after
 if (file_prefix):
     file_prefix += "-"
-    
-output_format_int = simpledialog.askinteger(title="File Format",
-                                 prompt="Please select the desired output file format.\n1 = .wav\n2 = .mp3",
-                                 initialvalue=1,
-                                 minvalue=1, maxvalue=2)  
-output_format = "wav" if output_format_int == 1 else "mp3"
-print('output format dialog value: ', output_format_int, output_format)
+
+output_format_int = ask_radio_dialog(
+    title="File Format",
+    prompt="Please select the desired output file format.",
+    options=[
+        ".wav",
+        ".mp3"
+    ]
+)
+
+# Yes, this looks redundant and long
+# I plan on expanding this to more audio formats
+output_format = None
+
+match output_format_int:
+    case 0:
+        output_format = "wav"
+    case 1:
+        output_format = "mp3"
 
 folder_path = prepare_output_dir()
 
