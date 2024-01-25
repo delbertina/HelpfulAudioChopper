@@ -14,13 +14,26 @@ from datetime import datetime
 def ask_radio_dialog(title: str, prompt: str, options: List[str]):
     root = Tk()
     root.title(title)
-    if prompt:
-        Label(root, text=prompt).pack()
+    
+    Label(root, text=prompt).pack(padx=10, pady=10)
+    
     v = IntVar(value=0)
     for i, option in enumerate(options):
-        Radiobutton(root, text=option, variable=v, value=i).pack(anchor="w")
-    Button(root, text="OK", command=lambda:(root.destroy())).pack()
+        Radiobutton(root, text=option, variable=v, value=i).pack(anchor="w", padx=10)
+    Button(root, text="OK", command=lambda:(root.destroy()), padx=20).pack(padx=10, pady=10)
     root.protocol(name="WM_DELETE_WINDOW", func=lambda:(root.destroy()))
+    root.update()
+    
+    w = root.winfo_reqwidth()
+    h = root.winfo_reqheight()
+    ws = root.winfo_screenwidth()
+    hs = root.winfo_screenheight()
+    x = (ws/2) - (w/2)
+    y = (hs/2) - (h/2)
+    print(w, h, ws, hs, x, y)
+    
+    root.geometry('%dx%d+%d+%d' % (w, h, x, y))
+    
     root.mainloop()
     root.quit() # Not totally sure why this is needed here and the destroy above, but it finally works
     return v.get()
