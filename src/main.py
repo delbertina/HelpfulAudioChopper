@@ -6,6 +6,8 @@ from tkinter.filedialog import askopenfilename
 from tkinter.messagebox import askyesno
 from pathlib import Path
 from datetime import datetime
+from os import rename, listdir
+from os.path import isfile, join
 
 # Ask dialog with list of radio buttons
 # Returns ths index of the selected option
@@ -70,10 +72,10 @@ chunks = split_on_silence (
 
 # Confirm with the user that the output number of chunks looks correct
 # Saving the files can take a long time so saves some time if this doesn't look right
-confirm_answer = askyesno(title=(str(len(chunks)) + " Chunks Found"),
+confirm_answer_chunk = askyesno(title=(str(len(chunks)) + " Chunks Found"),
                           message=(str(len(chunks)) + " chunks were found.\nDo you want to continue?"))
 
-if (not confirm_answer):
+if (not confirm_answer_chunk):
     exit("User decided to not continue.")
     
 # get the file name from the file path and truncate to 16 characters    
@@ -118,3 +120,21 @@ for i, chunk in enumerate(chunks):
         bitrate = "192k",
         format = output_format
     )
+    
+# ask if continue to rename menu
+confirm_answer_rename = askyesno(title="Start Renaming?",
+                          message=("Files finished processing.\nDo you want to continue to renaming menu?"))
+
+if (not confirm_answer_rename):
+    exit("User decided to not continue to renaming.")
+    
+print("did user continue to rename?", confirm_answer_rename)
+
+# get list of files to rename, just in case something went wrong somewhere
+finished_files = [f for f in listdir(folder_path) if isfile(join(folder_path, f))]
+print(folder_path, finished_files)
+
+# menu
+
+# rename action
+# rename('file1.txt', 'file2.kml')
