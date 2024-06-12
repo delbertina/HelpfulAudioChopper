@@ -3,6 +3,9 @@ Python application to split up an audio file and name the parts.
 
 Originally made to split up [this audio](https://www.youtube.com/watch?v=pOlDL3_MYnI) of 500+ sound effects, but built with reusability in mind.
 
+![T1XAsc3](https://github.com/delbertina/HelpfulAudioChopper/assets/6349928/20c2e58e-a4d5-4a01-93e9-160b2b578fe1)
+
+
 ### Planned Features
 
 - Change silence settings on the fly w/ menu
