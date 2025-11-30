@@ -1,4 +1,5 @@
 # HelpfulAudioChopper
+
 Python application to split up an audio file and name the parts.
 
 Originally made to split up [this audio](https://www.youtube.com/watch?v=pOlDL3_MYnI) of 500+ sound effects, but built with reusability in mind.
@@ -15,3 +16,6 @@ Originally made to split up [this audio](https://www.youtube.com/watch?v=pOlDL3_
 - More user friendly application
   - Maybe switch away from tkinter & potentially python too
   - Compile code into an .exe file or similar that opens a normal program window
+
+Uses [Poetry](https://python-poetry.org/docs/) for dependency managament.
+
