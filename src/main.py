@@ -60,7 +60,7 @@ elif filename.endswith(".wav"):
     song = AudioSegment.from_wav(filename)
 else:
     # If it's not one of the expected file types, exit this program
-    exit("Invalid file extension for file at: ", filename)
+    exit("Invalid file extension for file at: " + filename)
 
 chunks = split_on_silence (
     # Use the loaded audio.
@@ -101,7 +101,7 @@ output_format_int = ask_radio_dialog(
 
 # Yes, this looks redundant and long
 # I plan on expanding this to more audio formats
-output_format = None
+output_format = "wav"
 
 match output_format_int:
     case 0:
@@ -114,9 +114,9 @@ folder_path = prepare_output_dir()
 # Process each chunk with parameters
 for i, chunk in enumerate(chunks):
     # Export the audio chunk
-    print("Exporting chunk{0}.".format(i) + output_format)
+    print(f"Exporting chunk{i}.{output_format}")
     chunk.export(
-        folder_path + "/" + file_prefix + "chunk{0}.".format(i) + output_format,
+        f"{folder_path}/{file_prefix or ''}chunk{i}.{output_format}",
         bitrate = "192k",
         format = output_format
     )

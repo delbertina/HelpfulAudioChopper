@@ -6,9 +6,10 @@ authors = [
     {name = "Your Name",email = "you@example.com"}
 ]
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.13"
 dependencies = [
-    "pydub (>=0.25.1,<0.26.0)"
+    "pydub (>=0.25.1,<0.26.0)",
+    "audioop-lts (>=0.2.2,<0.3.0)"
 ]
 
 
